@@ -93,14 +93,3 @@ pip install pandas psycopg2-binary matplotlib folium geocoder
 ## 📄 Report
 
 See [report.pdf](report.pdf) for the detailed documentation, visuals, and analysis summary.
-
-## 👨‍💻 Author
-
-**Pranav Panchwagh**  
-<!-- Cybersecurity & Python Developer   -->
-Email: `panchwaghpranav13@gmail.com`
-
-## 📬 License
-
-This project is for educational use only. 
-
