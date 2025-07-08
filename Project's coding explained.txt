@@ -1,0 +1,186 @@
+**Cybersecurity Log Analysis Project: Full Code Explanation**
+
+---
+
+### 1. ETL Script (`etl_auth_logs.py`)
+
+**Purpose**: Load authentication logs from a CSV file into a PostgreSQL database.
+
+**Key Libraries:**
+
+* `pandas`: To read and process CSV file
+* `psycopg2`: To connect and interact with PostgreSQL
+
+**Steps:**
+
+1. **Import Libraries**:
+
+```python
+import pandas as pd
+import psycopg2
+```
+
+2. **Read CSV File**:
+
+```python
+df = pd.read_csv('auth_logs.csv')
+```
+
+This loads the logs into a pandas DataFrame.
+
+3. **Connect to PostgreSQL**:
+
+```python
+conn = psycopg2.connect(
+    host="localhost",
+    database="cyber_db",
+    user="postgres",
+    password="your_password"
+)
+cur = conn.cursor()
+```
+
+4. **Create Table (if not exists)**:
+
+```python
+cur.execute('''
+CREATE TABLE IF NOT EXISTS auth_logs (
+    timestamp TIMESTAMP,
+    username TEXT,
+    ip_address TEXT,
+    user_agent TEXT,
+    login_result TEXT,
+    auth_method TEXT,
+    location TEXT
+);
+''')
+```
+
+5. **Insert Data into Table**:
+
+```python
+for _, row in df.iterrows():
+    cur.execute("""
+        INSERT INTO auth_logs (timestamp, username, ip_address, user_agent, login_result, auth_method, location)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, tuple(row))
+```
+
+6. **Commit and Close**:
+
+```python
+conn.commit()
+cur.close()
+conn.close()
+```
+
+---
+
+### 2. Analysis Script (`analyze_auth_logs.py`)
+
+**Purpose**: Query the database, detect brute-force attacks, create charts and geo-map.
+
+**Key Libraries:**
+
+* `pandas`, `matplotlib.pyplot`, `folium`, `requests`, `psycopg2`
+
+**Steps:**
+
+1. **Connect to DB (via SQLAlchemy)**:
+
+```python
+from sqlalchemy import create_engine
+engine = create_engine('postgresql+psycopg2://postgres:your_password@localhost:5432/cyber_db')
+```
+
+2. **Query Failed Logins**:
+
+```python
+query = """
+SELECT ip_address, timestamp
+FROM auth_logs
+WHERE login_result = 'failure';
+"""
+df = pd.read_sql(query, engine)
+```
+
+3. **Detect Brute-Force (Failures per minute)**:
+
+```python
+df['minute'] = pd.to_datetime(df['timestamp']).dt.floor('T')
+failed_counts = df.groupby(['ip_address', 'minute']).size().reset_index(name='failed_attempts')
+suspicious = failed_counts[failed_counts['failed_attempts'] > 5]
+```
+
+4. **Visualize Top 5 IPs**:
+
+```python
+import matplotlib.pyplot as plt
+
+top_ips = suspicious.groupby('ip_address')['failed_attempts'].sum().sort_values(ascending=False).head(5)
+top_ips.plot(kind='bar', title='Top 5 IPs with Failed Logins')
+plt.savefig('Figure_1.png')
+```
+
+5. **Geo-Mapping IPs**:
+
+```python
+import folium
+import requests
+
+map = folium.Map(location=[20, 0], zoom_start=2)
+for ip in suspicious['ip_address'].unique():
+    response = requests.get(f'http://ip-api.com/json/{ip}').json()
+    if response['status'] == 'success':
+        folium.Marker([response['lat'], response['lon']], popup=ip).add_to(map)
+map.save('attackers_map.html')
+```
+
+---
+
+### 3. Email Script (Inside `analyze_auth_logs.py` or separate)
+
+**Purpose**: Send daily report via Gmail.
+
+**Libraries**: `smtplib`, `email.message`
+
+**Steps:**
+
+```python
+from email.message import EmailMessage
+import smtplib
+
+msg = EmailMessage()
+msg['Subject'] = 'Daily Auth Log Report'
+msg['From'] = sender_email
+msg['To'] = recipient_email
+msg.set_content("See attached failed login report.")
+
+with open('Figure_1.png', 'rb') as f:
+    msg.add_attachment(f.read(), maintype='image', subtype='png', filename='Figure_1.png')
+
+with open('attackers_map.html', 'rb') as f:
+    msg.add_attachment(f.read(), maintype='text', subtype='html', filename='attackers_map.html')
+
+with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    smtp.login(sender_email, app_password)
+    smtp.send_message(msg)
+```
+
+---
+
+### 4. Scheduler
+
+* Created a `.bat` file to run the script:
+
+```bat
+@echo off
+cd "C:\Cybersecurity Log Analysis Project"
+python analyze_auth_logs.py
+```
+
+* Scheduled it daily via **Windows Task Scheduler**.
+
+---
+
+This breakdown covers all critical parts of project and their implementation.

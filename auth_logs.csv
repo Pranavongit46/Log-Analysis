@@ -1,0 +1,19 @@
+timestamp,username,ip_address,user_agent,login_result,auth_method,location
+2025-05-25 12:01:22,admin,192.168.1.100,Mozilla/5.0,success,password,Local Network
+2025-05-25 12:02:15,admin,203.0.113.55,curl/7.68.0,failure,password,Unknown
+2025-05-25 12:02:17,admin,203.0.113.55,curl/7.68.0,failure,password,Unknown
+2025-05-25 12:02:20,admin,203.0.113.55,curl/7.68.0,failure,password,Unknown
+2025-05-25 12:05:30,john,45.83.1.22,Mozilla/5.0,success,password,Germany
+2025-05-25 12:10:45,root,198.51.100.75,python-requests/2.25.1,failure,password,Unknown
+2025-05-25 12:11:03,root,198.51.100.75,python-requests/2.25.1,failure,password,Unknown
+2025-05-25 12:00:00,admin,45.33.32.156,Chrome,failure,password,
+2025-05-25 12:00:10,admin,1.1.1.1,Chrome,failure,password,
+2025-05-25 12:00:20,admin,45.33.32.156,Chrome,failure,password,
+2025-05-25 12:00:30,admin,45.33.32.156,Chrome,failure,password,
+2025-05-25 12:00:40,admin,45.33.32.156,Chrome,failure,password,
+2025-05-25 12:01:00,guest,1.1.1.1,Firefox,failure,password,
+2025-05-25 12:01:15,guest,8.8.8.8,Firefox,failure,password,
+2025-05-25 12:01:30,guest,8.8.8.8,Firefox,failure,password,
+2025-05-25 12:01:45,guest,8.8.8.8,Firefox,failure,password,
+2025-05-25 12:02:00,guest,8.8.8.8,Firefox,failure,password,
+

@@ -1,0 +1,5 @@
+ Run the ETL Script Live : python etl_auth_logs.py
+
+
+
+ Run the Analysis & Visualization Script : python analyze_auth_logs.py

@@ -1,0 +1,98 @@
+Here’s the full **step-by-step project explanation** that you can copy and paste into a Word document:
+
+---
+
+# **Cybersecurity Log Analysis Project – Step-by-Step Explanation**
+
+---
+
+### **Step 1: Define Project Goal**
+
+**Objective**: Detect brute-force login attempts from authentication logs and report them with visualizations and geographic locations.
+
+---
+
+### **Step 2: Design the Data Schema**
+
+Created a relational table in **PostgreSQL** called `auth_logs` with the following columns:
+
+* `timestamp`
+* `username`
+* `ip_address`
+* `user_agent`
+* `login_result`
+* `auth_method`
+* `location` (optional or for enrichment)
+
+---
+
+### **Step 3: Generate or Collect Sample Log Data**
+
+Created a CSV file `auth_logs.csv` with simulated login attempts, including public IPs for accurate geo-location.
+
+Example entry:
+
+```
+2025-05-25 12:00:00,admin,8.8.8.8,Mozilla/5.0,failure,password,
+```
+
+---
+
+### **Step 4: Build the ETL Script (`etl_auth_logs.py`)**
+
+* **Extract**: Read the CSV file using `pandas`.
+* **Transform**: Clean and prepare the data.
+* **Load**: Connect to PostgreSQL using `psycopg2` and insert the data into the `auth_logs` table.
+
+---
+
+### **Step 5: Write Analysis Script (`analyze_auth_logs.py`)**
+
+* Query failed login attempts from PostgreSQL.
+* Group by IP and time window to detect brute-force attacks.
+* Generate a **bar chart** with `matplotlib`.
+* Use `folium` + `ip-api.com` to geolocate IPs and generate `attackers_map.html`.
+
+---
+
+### **Step 6: Automate Report Emailing**
+
+* Used `smtplib` and `email.message` in Python to send a daily email.
+* Attached:
+
+  * `Figure_1.png` (chart of failed login IPs)
+  * `attackers_map.html` (geo-map)
+* Sent using a **Gmail App Password** for security.
+
+---
+
+### **Step 7: Schedule Daily Report**
+
+* Created a `.bat` file to automate script execution.
+* Used **Windows Task Scheduler** to run the script daily at a specified time.
+
+---
+
+### **Step 8: Document the Project**
+
+* Created a detailed `README.md` with:
+
+  * Project overview
+  * Features
+  * Technologies used
+  * How to run the project
+* Added screenshots and a project architecture diagram
+* Compiled a final PDF report for submission
+
+---
+
+### **Step 9: Final Output**
+
+* ✅ ETL and analysis pipeline fully functional
+* ✅ Charts and geo-map created successfully
+* ✅ Email automation working
+* ✅ Project well documented and ready for presentation
+
+---
+
+
